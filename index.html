@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FinHub — Financial Hub for Students</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:#0a1628;color:#fff;min-height:100vh;overflow-x:hidden}
+    :root{--primary:#00d4aa;--red:#ff4d4d;--card:#0f1e36;--border:#1e3a5f;--muted:#6b8aad}
+    a{text-decoration:none;color:inherit}
+
+    /* ── AUTH OVERLAY ── */
+    #authOverlay{position:fixed;inset:0;background:#0a1628;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+    #authOverlay.hidden{display:none}
+    .auth-box{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:40px;width:100%;max-width:420px;box-shadow:0 24px 80px rgba(0,0,0,.4)}
+    .auth-logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px}
+    .auth-logo-icon{width:40px;height:40px;background:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center}
+    .auth-logo-icon svg{width:20px;height:20px;stroke:#0a1628;fill:none;stroke-width:2.5}
+    .auth-logo span{font-size:22px;font-weight:800}
+    .auth-tabs{display:flex;background:rgba(255,255,255,.04);border-radius:10px;padding:4px;margin-bottom:28px}
+    .auth-tab{flex:1;padding:9px;border-radius:7px;font-size:14px;font-weight:600;text-align:center;cursor:pointer;border:none;background:none;color:var(--muted);font-family:inherit;transition:all .2s}
+    .auth-tab.active{background:var(--card);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+    .auth-title{font-size:20px;font-weight:800;margin-bottom:6px}
+    .auth-sub{font-size:14px;color:var(--muted);margin-bottom:24px}
+    .field{margin-bottom:16px}
+    .field label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px}
+    .field input{width:100%;background:#0a1628;border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;color:#fff;font-size:14px;font-family:inherit;transition:border-color .2s}
+    .field input:focus{outline:none;border-color:var(--primary)}
+    .auth-btn{width:100%;padding:13px;border-radius:10px;background:var(--primary);color:#0a1628;font-weight:700;font-size:15px;border:none;cursor:pointer;font-family:inherit;transition:opacity .2s;margin-top:4px}
+    .auth-btn:hover{opacity:.88}
+    .auth-error{background:rgba(255,77,77,.1);border:1px solid rgba(255,77,77,.3);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:14px;display:none}
+    .auth-error.show{display:block}
+    .auth-divider{text-align:center;color:var(--muted);font-size:12px;margin:16px 0;position:relative}
+    .auth-divider::before,.auth-divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:var(--border)}
+    .auth-divider::before{left:0}.auth-divider::after{right:0}
+    .guest-btn{width:100%;padding:12px;border-radius:10px;background:transparent;border:1.5px solid var(--border);color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+    .guest-btn:hover{border-color:rgba(255,255,255,.2);color:#fff}
+    .auth-footer{text-align:center;font-size:12px;color:var(--muted);margin-top:20px}
+
+    /* ── NAV ── */
+    nav{display:flex;align-items:center;justify-content:space-between;padding:18px 40px;position:fixed;top:0;left:0;right:0;z-index:99;background:rgba(10,22,40,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+    .logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800}
+    .logo-icon{width:34px;height:34px;background:var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center}
+    .logo-icon svg{width:18px;height:18px;stroke:#0a1628;fill:none;stroke-width:2.5}
+    .nav-links{display:flex;gap:24px}
+    .nav-links a{font-size:14px;font-weight:500;color:var(--muted);transition:color .2s}
+    .nav-links a:hover{color:var(--primary)}
+    .nav-right{display:flex;align-items:center;gap:12px}
+    .user-pill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:999px;padding:6px 14px 6px 6px;cursor:pointer;transition:all .2s}
+    .user-pill:hover{border-color:rgba(255,255,255,.2)}
+    .user-avatar{width:28px;height:28px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#0a1628}
+    .user-name{font-size:14px;font-weight:600}
+    .logout-btn{font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;font-family:inherit;transition:color .2s}
+    .logout-btn:hover{color:var(--red)}
+
+    /* ── HERO ── */
+    .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 24px 80px;position:relative;overflow:hidden}
+    .glow{position:absolute;border-radius:50%;pointer-events:none;filter:blur(80px)}
+    .glow1{width:500px;height:500px;background:rgba(0,212,170,.07);top:10%;left:10%}
+    .glow2{width:400px;height:400px;background:rgba(59,130,246,.06);bottom:10%;right:10%}
+    .welcome-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.25);color:var(--primary);border-radius:999px;padding:6px 18px;font-size:13px;font-weight:600;margin-bottom:20px}
+    h1{font-size:clamp(44px,7vw,84px);font-weight:800;letter-spacing:-3px;line-height:1.05;margin-bottom:22px}
+    .grad{background:linear-gradient(135deg,var(--primary) 0%,#60a5fa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero-sub{font-size:18px;color:var(--muted);max-width:560px;margin:0 auto 52px;line-height:1.7}
+
+    /* ── CARDS ── */
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;max-width:960px;width:100%;margin:0 auto;padding:0 24px}
+    .card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:34px 26px;display:flex;flex-direction:column;gap:18px;transition:transform .2s,border-color .2s;cursor:pointer;text-align:left}
+    .card:hover{transform:translateY(-4px);border-color:rgba(0,212,170,.35)}
+    .card-icon{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+    .card-icon svg{width:24px;height:24px;stroke-width:2;fill:none;stroke:currentColor}
+    .card h2{font-size:19px;font-weight:800;letter-spacing:-.5px}
+    .card p{font-size:14px;color:var(--muted);line-height:1.65;flex:1}
+    .card-tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:4px 10px;border-radius:999px;border:1px solid;width:fit-content}
+    .card-link{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;transition:gap .2s}
+    .card-link svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5}
+    .card:hover .card-link{gap:12px}
+
+    /* ── TICKER ── */
+    .ticker-wrap{position:fixed;bottom:0;left:0;right:0;background:rgba(10,22,40,.95);border-top:1px solid var(--border);padding:10px 0;overflow:hidden;z-index:90}
+    .ticker-track{display:flex;gap:40px;white-space:nowrap;animation:tick 30s linear infinite}
+    .tick-item{display:flex;align-items:center;gap:8px;font-size:13px}
+    .tick-sym{font-weight:700}.up{color:var(--primary)}.dn{color:var(--red)}.sep{color:var(--border);margin-left:20px}
+    @keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    .footer{padding:40px;text-align:center;color:var(--muted);font-size:13px;margin-bottom:44px}
+
+    @media(max-width:700px){.cards{grid-template-columns:1fr}.nav-links{display:none}nav{padding:14px 18px}}
+  </style>
+</head>
+<body>
+
+<!-- ── AUTH OVERLAY ── -->
+<div id="authOverlay">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="auth-logo-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <span>FinHub</span>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+      <button class="auth-tab" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <!-- Login Form -->
+    <div id="loginForm">
+      <div class="auth-title">Welcome back</div>
+      <div class="auth-sub">Sign in to your FinHub account</div>
+      <div class="auth-error" id="loginError"></div>
+      <div class="field"><label>Username or Email</label><input id="loginUser" type="text" placeholder="Enter your username" /></div>
+      <div class="field"><label>Password</label><input id="loginPass" type="password" placeholder="Enter your password" /></div>
+      <button class="auth-btn" onclick="doLogin()">Sign In</button>
+      <div class="auth-divider">or</div>
+      <button class="guest-btn" onclick="guestLogin()">Continue as Guest</button>
+    </div>
+
+    <!-- Register Form -->
+    <div id="registerForm" style="display:none">
+      <div class="auth-title">Create account</div>
+      <div class="auth-sub">Start your investing journey today</div>
+      <div class="auth-error" id="regError"></div>
+      <div class="field"><label>Full Name</label><input id="regName" type="text" placeholder="Your name" /></div>
+      <div class="field"><label>Username</label><input id="regUser" type="text" placeholder="Choose a username" /></div>
+      <div class="field"><label>Email</label><input id="regEmail" type="email" placeholder="your@email.com" /></div>
+      <div class="field"><label>Password</label><input id="regPass" type="password" placeholder="Create a password (min 6 chars)" /></div>
+      <button class="auth-btn" onclick="doRegister()">Create Account</button>
+    </div>
+
+    <div class="auth-footer">By continuing, you agree to our Terms of Service &amp; Privacy Policy.<br>For educational purposes only — not real financial advice.</div>
+  </div>
+</div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="logo">
+    <div class="logo-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+    FinHub
+  </div>
+  <div class="nav-links">
+    <a href="game.html">Market Game</a>
+    <a href="real.html">Real Portfolio</a>
+    <a href="course.html">Crash Course</a>
+  </div>
+  <div class="nav-right">
+    <div class="user-pill" id="userPill">
+      <div class="user-avatar" id="userAvatar">?</div>
+      <span class="user-name" id="userName">Guest</span>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">Logout</button>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="glow glow1"></div>
+  <div class="glow glow2"></div>
+  <div class="welcome-badge" id="welcomeBadge">Welcome to FinHub</div>
+  <h1>Learn Investing<br>by <span class="grad">Doing</span></h1>
+  <p class="hero-sub">Stop reading boring textbooks. Experience real markets, trade real stocks, and build confidence for your financial future — all risk-free.</p>
+
+  <div class="cards">
+    <a class="card" href="game.html">
+      <div class="card-icon" style="background:rgba(0,212,170,.12);color:var(--primary)">
+        <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </div>
+      <h2>Market Game</h2>
+      <p>Fast-paced buy &amp; sell game. Volatile prices, market events, leaderboard. Start with ₹10,000 and beat the board!</p>
+      <span class="card-tag" style="color:var(--primary);border-color:rgba(0,212,170,.3)">Beginner Friendly</span>
+      <span class="card-link" style="color:var(--primary)">Play Now <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+    </a>
+    <a class="card" href="real.html">
+      <div class="card-icon" style="background:rgba(96,165,250,.12);color:#60a5fa">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </div>
+      <h2>Real Portfolio</h2>
+      <p>Invest in real companies — AAPL, TSLA, NVDA &amp; more. Live prices from Yahoo Finance. NYSE hours enforced. Start with ₹50,000.</p>
+      <span class="card-tag" style="color:#60a5fa;border-color:rgba(96,165,250,.3)">Real Companies</span>
+      <span class="card-link" style="color:#60a5fa">Start Investing <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+    </a>
+    <a class="card" href="course.html">
+      <div class="card-icon" style="background:rgba(167,139,250,.12);color:#a78bfa">
+        <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      </div>
+      <h2>Crash Course</h2>
+      <p>6 essential investing topics explained simply. Stocks, risk management, P/E ratios, bull &amp; bear markets and more.</p>
+      <span class="card-tag" style="color:#a78bfa;border-color:rgba(167,139,250,.3)">Learn the Basics</span>
+      <span class="card-link" style="color:#a78bfa">Start Learning <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+    </a>
+  </div>
+</section>
+
+<div class="footer">
+  <p>© <span id="yr"></span> Financial Hub for Students &nbsp;·&nbsp; For educational purposes only. Not financial advice.</p>
+</div>
+
+<div class="ticker-wrap"><div class="ticker-track" id="ticker"></div></div>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+// ── Ticker ──
+const TICKERS=[
+  {s:'AAPL',v:'+1.2%',u:true},{s:'TSLA',v:'-0.8%',u:false},{s:'MSFT',v:'+0.5%',u:true},
+  {s:'NVDA',v:'+3.4%',u:true},{s:'GOOGL',v:'+0.9%',u:true},{s:'META',v:'-1.1%',u:false},
+  {s:'AMZN',v:'+0.6%',u:true},{s:'NFLX',v:'-0.4%',u:false},{s:'AMD',v:'+2.1%',u:true},
+  {s:'PYPL',v:'-2.3%',u:false},{s:'INTC',v:'+0.3%',u:true},{s:'ORCL',v:'+1.8%',u:true},
+];
+const d=[...TICKERS,...TICKERS];
+document.getElementById('ticker').innerHTML=d.map(t=>`<div class="tick-item"><span class="tick-sym">${t.s}</span><span class="${t.u?'up':'dn'}">${t.v}</span><span class="sep">|</span></div>`).join('');
+
+// ── Auth System ──
+const USERS_KEY='finhub_users';
+const SESSION_KEY='finhub_session';
+
+function getUsers(){return JSON.parse(localStorage.getItem(USERS_KEY)||'{}');}
+function saveUsers(u){localStorage.setItem(USERS_KEY,JSON.stringify(u));}
+function getSession(){return JSON.parse(localStorage.getItem(SESSION_KEY)||'null');}
+function saveSession(s){localStorage.setItem(SESSION_KEY,JSON.stringify(s));}
+
+function switchTab(t){
+  document.querySelectorAll('.auth-tab').forEach((b,i)=>b.classList.toggle('active',i===(t==='login'?0:1)));
+  document.getElementById('loginForm').style.display=t==='login'?'block':'none';
+  document.getElementById('registerForm').style.display=t==='register'?'block':'none';
+}
+
+function showError(id,msg){const e=document.getElementById(id);e.textContent=msg;e.classList.add('show');}
+function hideError(id){document.getElementById(id).classList.remove('show');}
+
+function doLogin(){
+  hideError('loginError');
+  const u=document.getElementById('loginUser').value.trim();
+  const p=document.getElementById('loginPass').value;
+  if(!u||!p){showError('loginError','Please enter username and password.');return;}
+  const users=getUsers();
+  const user=users[u.toLowerCase()]||Object.values(users).find(x=>x.email===u.toLowerCase());
+  if(!user){showError('loginError','Account not found. Please register first.');return;}
+  if(user.passHash!==btoa(p)){showError('loginError','Incorrect password. Please try again.');return;}
+  saveSession({username:user.username,name:user.name,email:user.email});
+  showApp(user.name,user.username);
+}
+
+function doRegister(){
+  hideError('regError');
+  const name=document.getElementById('regName').value.trim();
+  const u=document.getElementById('regUser').value.trim().toLowerCase();
+  const email=document.getElementById('regEmail').value.trim().toLowerCase();
+  const p=document.getElementById('regPass').value;
+  if(!name||!u||!email||!p){showError('regError','Please fill in all fields.');return;}
+  if(p.length<6){showError('regError','Password must be at least 6 characters.');return;}
+  if(!/^[a-z0-9_]+$/.test(u)){showError('regError','Username: only letters, numbers, and underscores.');return;}
+  const users=getUsers();
+  if(users[u]){showError('regError','Username already taken. Choose another.');return;}
+  if(Object.values(users).find(x=>x.email===email)){showError('regError','Email already registered. Sign in instead.');return;}
+  users[u]={username:u,name,email,passHash:btoa(p),joinedAt:new Date().toISOString()};
+  saveUsers(users);
+  saveSession({username:u,name,email});
+  showApp(name,u);
+}
+
+function guestLogin(){
+  const s={username:'guest',name:'Guest Investor',email:'',isGuest:true};
+  saveSession(s);
+  showApp(s.name,s.username);
+}
+
+function doLogout(){
+  localStorage.removeItem(SESSION_KEY);
+  document.getElementById('authOverlay').classList.remove('hidden');
+  document.getElementById('loginUser').value='';
+  document.getElementById('loginPass').value='';
+  switchTab('login');
+}
+
+function showApp(name,username){
+  document.getElementById('authOverlay').classList.add('hidden');
+  document.getElementById('userName').textContent=name;
+  document.getElementById('userAvatar').textContent=name.charAt(0).toUpperCase();
+  document.getElementById('welcomeBadge').textContent='Welcome back, '+name.split(' ')[0]+'!';
+}
+
+// Check existing session
+const session=getSession();
+if(session){showApp(session.name,session.username);}
+
+// Enter key support
+document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+document.getElementById('loginUser').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+</script>
+</body>
+</html>
