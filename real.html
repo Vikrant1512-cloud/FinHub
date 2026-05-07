@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Real Portfolio — FinHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#0a1628;color:#fff;min-height:100vh}
+    :root{--primary:#00d4aa;--red:#ff4d4d;--card:#0f1e36;--border:#1e3a5f;--muted:#6b8aad}
+
+    nav{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:rgba(10,22,40,.95);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:99}
+    .logo{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800;text-decoration:none;color:#fff}
+    .logo-icon{width:30px;height:30px;background:var(--primary);border-radius:7px;display:flex;align-items:center;justify-content:center}
+    .logo-icon svg{width:16px;height:16px;stroke:#0a1628;fill:none;stroke-width:2.5}
+    .nav-pages{display:flex;gap:12px}
+    .nav-pages a{font-size:13px;color:var(--muted);text-decoration:none;padding:6px 13px;border-radius:7px;transition:all .2s}
+    .nav-pages a.active,.nav-pages a:hover{background:rgba(96,165,250,.1);color:#60a5fa}
+    .back{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;text-decoration:none}
+    .back:hover{color:var(--primary)}
+    .back svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.5}
+
+    .page{max-width:1200px;margin:0 auto;padding:24px 20px 60px}
+    .top-bar{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+    .top-bar-left h1{font-size:22px;font-weight:800;margin-bottom:3px}
+    .top-bar-left p{color:var(--muted);font-size:13px}
+    .top-bar-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .clock-pill{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:7px 14px;text-align:right}
+    .clock-val{font-family:monospace;font-weight:700;font-size:15px}
+    .clock-lbl{font-size:10px;color:var(--muted)}
+    .add-money-btn{cursor:pointer;background:rgba(0,212,170,.1);border:1.5px solid rgba(0,212,170,.25);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;color:var(--primary);font-family:inherit;display:flex;align-items:center;gap:7px;transition:all .2s}
+    .add-money-btn:hover{background:rgba(0,212,170,.18)}
+    .add-money-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5}
+    .refresh-btn{cursor:pointer;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--muted);font-family:inherit;display:flex;align-items:center;gap:7px;transition:all .2s}
+    .refresh-btn:hover{color:#fff;border-color:rgba(255,255,255,.2)}
+    .refresh-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+
+    /* Add money modal */
+    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+    .modal-bg.show{display:flex}
+    .modal{background:#0f1e36;border:1.5px solid var(--border);border-radius:16px;padding:32px;width:100%;max-width:380px}
+    .modal h3{font-size:18px;font-weight:700;margin-bottom:6px}
+    .modal p{font-size:13px;color:var(--muted);margin-bottom:20px}
+    .modal-field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px}
+    .modal-field input{width:100%;background:#0a1628;border:1.5px solid var(--border);border-radius:9px;padding:11px 13px;color:#fff;font-size:15px;font-family:monospace;transition:border-color .2s}
+    .modal-field input:focus{outline:none;border-color:var(--primary)}
+    .modal-btns{display:flex;gap:10px;margin-top:20px}
+    .modal-cancel{flex:1;padding:11px;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+    .modal-add{flex:1;padding:11px;border-radius:9px;background:var(--primary);border:none;color:#0a1628;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+    .quick-amounts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+    .quick-amt{cursor:pointer;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:7px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--muted);transition:all .2s;font-family:inherit}
+    .quick-amt:hover{border-color:var(--primary);color:var(--primary)}
+
+    /* Status banner */
+    #statusBanner{border-radius:11px;padding:13px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+    #statusBanner.open{background:rgba(0,212,170,.08);border:1px solid rgba(0,212,170,.25)}
+    #statusBanner.closed{background:rgba(255,77,77,.06);border:1px solid rgba(255,77,77,.2)}
+    #statusBanner.pre{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2)}
+    .status-left{display:flex;align-items:center;gap:10px}
+    .status-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+    .dot-open{background:var(--primary);animation:pls 1.5s infinite}
+    @keyframes pls{0%,100%{box-shadow:0 0 0 0 rgba(0,212,170,.4)}50%{box-shadow:0 0 0 5px rgba(0,212,170,0)}}
+    .dot-closed{background:var(--red)}.dot-pre{background:#f59e0b}
+    .status-title{font-weight:700;font-size:14px}
+    .status-sub{font-size:12px;color:var(--muted);margin-top:1px}
+    .last-upd{font-size:11px;color:var(--muted)}
+
+    #closedNote{display:none;background:rgba(255,77,77,.05);border:1px solid rgba(255,77,77,.15);border-radius:9px;padding:12px 16px;font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6}
+    #closedNote.show{display:block}
+    #closedNote strong{color:#fff}
+
+    /* Loading */
+    #loadBar{background:rgba(0,212,170,.08);border:1px solid rgba(0,212,170,.2);border-radius:10px;padding:18px 20px;text-align:center;color:var(--muted);font-size:14px;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:10px}
+    #loadBar.done{display:none}
+    #loadBar svg{width:18px;height:18px;stroke:var(--primary);fill:none;stroke-width:2;animation:spin 1.1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .fx-note{background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.15);border-radius:9px;padding:10px 14px;font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6}
+    .fx-note strong{color:#60a5fa}
+
+    /* Summary */
+    .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+    .sum-card{background:var(--card);border:1.5px solid var(--border);border-radius:11px;padding:13px 15px}
+    .sum-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+    .sum-val{font-family:monospace;font-weight:700;font-size:15px}
+
+    .main{display:grid;grid-template-columns:1fr 280px;gap:18px;align-items:start}
+    .mkt-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .mkt-head h2{font-size:16px;font-weight:700}
+    .price-src{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:5px}
+    .price-src .dot{width:6px;height:6px;border-radius:50%;background:var(--primary)}
+
+    .mkt-card{background:var(--card);border:1.5px solid var(--border);border-radius:11px;padding:13px 15px;display:grid;grid-template-columns:150px 160px 1fr auto;align-items:center;gap:10px;margin-bottom:9px;transition:border-color .2s}
+    .mkt-card:hover{border-color:rgba(96,165,250,.2)}
+    .mkt-card.mkt-closed .btn-sell,.mkt-card.mkt-closed .btn-buy{opacity:.35;cursor:not-allowed;pointer-events:none}
+    .mkt-card.mkt-closed .qty-in{opacity:.5;pointer-events:none}
+    .m-sym{font-weight:800;font-size:14px}
+    .m-name{font-size:11px;color:var(--muted)}
+    .m-sector{font-size:10px;color:#3b82f6;margin-top:2px}
+    .m-price-inr{font-family:monospace;font-weight:700;font-size:15px}
+    .m-price-usd{font-size:10px;color:var(--muted);margin-top:1px}
+    .m-chg{font-size:12px;font-weight:600}
+    .up{color:var(--primary)}.dn{color:var(--red)}
+    .m-hold{font-size:12px}
+    .m-hold-sh{color:var(--muted);font-size:11px;margin-bottom:2px}
+    .m-hold-pnl{font-weight:600}
+    .m-actions{display:flex;align-items:center;gap:6px}
+    .qty-in{width:50px;background:#0a1628;border:1.5px solid var(--border);border-radius:6px;padding:6px;color:#fff;font-size:13px;text-align:center;font-family:monospace}
+    .qty-in:focus{outline:none;border-color:var(--primary)}
+    .btn{cursor:pointer;border:none;font-family:inherit;font-weight:600;font-size:12px;padding:6px 13px;border-radius:7px;transition:all .2s}
+    .btn:disabled{opacity:.35;cursor:not-allowed}
+    .btn-sell{background:rgba(255,77,77,.1);color:var(--red);border:1.5px solid rgba(255,77,77,.3)}
+    .btn-sell:not(:disabled):hover{background:var(--red);color:#fff}
+    .btn-buy{background:rgba(0,212,170,.1);color:var(--primary);border:1.5px solid rgba(0,212,170,.3)}
+    .btn-buy:not(:disabled):hover{background:var(--primary);color:#0a1628}
+
+    .side-card{background:var(--card);border:1.5px solid var(--border);border-radius:11px;padding:16px;margin-bottom:12px}
+    .side-card h3{font-size:14px;font-weight:700;margin-bottom:12px}
+    .chart-svg{width:100%;height:120px;display:block}
+    .chart-lbl{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px}
+    .hold-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px}
+    .hold-row:last-child{border-bottom:none}
+    .h-sym{font-weight:700;font-size:13px}
+    .h-sh{font-size:11px;color:var(--muted)}
+    .h-mv{font-family:monospace;font-weight:700;font-size:12px}
+    .h-pnl{font-size:10px;font-weight:600}
+    .empty-msg{font-size:13px;color:var(--muted)}
+    .hours-table{width:100%;font-size:12px;border-collapse:collapse}
+    .hours-table td{padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);color:var(--muted)}
+    .hours-table td:last-child{text-align:right;color:#fff;font-weight:600}
+    .hours-table tr:last-child td{border-bottom:none}
+
+    @media(max-width:900px){.main{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}.mkt-card{grid-template-columns:120px 140px 1fr}}
+    @media(max-width:560px){.mkt-card{grid-template-columns:1fr 1fr;row-gap:8px}.m-actions{grid-column:1/-1;justify-content:flex-end}.nav-pages{display:none}.top-bar-right{width:100%}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html">
+    <div class="logo-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+    FinHub
+  </a>
+  <div class="nav-pages">
+    <a href="game.html">Market Game</a>
+    <a href="real.html" class="active">Real Portfolio</a>
+    <a href="course.html">Crash Course</a>
+  </div>
+  <a class="back" href="index.html"><svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>Home</a>
+</nav>
+
+<!-- Add Money Modal -->
+<div class="modal-bg" id="addMoneyModal">
+  <div class="modal">
+    <h3>Add Money</h3>
+    <p>Simulate depositing real money into your portfolio account. Enter amount in ₹.</p>
+    <div class="modal-field">
+      <label>Amount (₹)</label>
+      <input type="number" id="addAmount" min="100" placeholder="e.g. 10000"/>
+    </div>
+    <div class="quick-amounts">
+      <button class="quick-amt" onclick="setAmt(5000)">₹5,000</button>
+      <button class="quick-amt" onclick="setAmt(10000)">₹10,000</button>
+      <button class="quick-amt" onclick="setAmt(25000)">₹25,000</button>
+      <button class="quick-amt" onclick="setAmt(50000)">₹50,000</button>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-add" onclick="confirmAdd()">Add Money</button>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <h1>Real Portfolio Simulator</h1>
+      <p>Live prices from Yahoo Finance · NYSE hours enforced · Start with ₹50,000</p>
+    </div>
+    <div class="top-bar-right">
+      <div class="clock-pill">
+        <div class="clock-val" id="clock">--:--:--</div>
+        <div class="clock-lbl">US Eastern Time</div>
+      </div>
+      <button class="add-money-btn" onclick="openModal()">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Money
+      </button>
+      <button class="refresh-btn" onclick="fetchAll(true)">
+        <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-5"/></svg>
+        Refresh Prices
+      </button>
+    </div>
+  </div>
+
+  <div id="statusBanner" class="closed">
+    <div class="status-left">
+      <div class="status-dot dot-closed" id="statusDot"></div>
+      <div>
+        <div class="status-title" id="statusTitle">Checking market...</div>
+        <div class="status-sub" id="statusSub">Loading status</div>
+      </div>
+    </div>
+    <div class="last-upd" id="lastUpd">Prices not yet loaded</div>
+  </div>
+
+  <div id="closedNote" class="show">
+    <strong>Trading Restricted:</strong> NYSE is closed. You can view prices and plan trades, but buy/sell is only enabled Mon–Fri, 9:30 AM–4:00 PM ET — just like a real brokerage.
+  </div>
+
+  <div id="loadBar">
+    <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+    Fetching live prices from Yahoo Finance...
+  </div>
+
+  <div class="fx-note">
+    <strong>USD → INR:</strong> Stock prices are in USD (real market data). Your ₹ balance converts at the current rate (1 USD ≈ ₹<span id="fxRate">83.50</span>). Prices refresh every 60s when market is open.
+  </div>
+
+  <div class="summary" id="summary"></div>
+
+  <div class="main">
+    <div>
+      <div class="mkt-head">
+        <h2>Live Market</h2>
+        <div class="price-src"><div class="dot"></div><span id="srcLabel">Loading...</span></div>
+      </div>
+      <div id="mktList"><p style="color:var(--muted);font-size:14px;padding:16px 0">Fetching prices...</p></div>
+    </div>
+    <div>
+      <div class="side-card">
+        <h3>Portfolio Value (₹)</h3>
+        <svg id="chartSvg" class="chart-svg" viewBox="0 0 260 120" preserveAspectRatio="none"></svg>
+        <div class="chart-lbl"><span>Start</span><span>Now</span></div>
+      </div>
+      <div class="side-card">
+        <h3>My Holdings</h3>
+        <div id="holdList"><p class="empty-msg">No holdings yet.</p></div>
+      </div>
+      <div class="side-card">
+        <h3>Trading Hours (ET)</h3>
+        <table class="hours-table">
+          <tr><td>Pre-Market</td><td>4:00 AM–9:30 AM</td></tr>
+          <tr><td>Market Open</td><td>9:30 AM–4:00 PM</td></tr>
+          <tr><td>After-Hours</td><td>4:00 PM–8:00 PM</td></tr>
+          <tr><td>Weekend</td><td>Closed</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// USD/INR rate (updated periodically; approximate)
+let FX_RATE = 83.50;
+const START = 50000; // ₹50,000
+let balance = START;
+const holdings = {};
+let portHistory = [START];
+let marketOpen = false;
+let pricesLoaded = false;
+
+// Real stock data — fallback USD prices (approximate, early 2025)
+const FALLBACK = {
+  AAPL:189.50, MSFT:415.20, NVDA:875.00, GOOGL:171.30,
+  AMZN:198.70, META:523.40, TSLA:245.80, NFLX:632.10
+};
+
+const STOCKS = [
+  {sym:'AAPL',name:'Apple Inc.',sector:'Technology',   usd:0,prevUsd:FALLBACK.AAPL,change:0,changePct:0,loaded:false},
+  {sym:'MSFT',name:'Microsoft Corp.',sector:'Technology', usd:0,prevUsd:FALLBACK.MSFT,change:0,changePct:0,loaded:false},
+  {sym:'NVDA',name:'NVIDIA Corp.',sector:'Semiconductors',usd:0,prevUsd:FALLBACK.NVDA,change:0,changePct:0,loaded:false},
+  {sym:'GOOGL',name:'Alphabet Inc.',sector:'Technology',  usd:0,prevUsd:FALLBACK.GOOGL,change:0,changePct:0,loaded:false},
+  {sym:'AMZN',name:'Amazon.com',sector:'E-Commerce',     usd:0,prevUsd:FALLBACK.AMZN,change:0,changePct:0,loaded:false},
+  {sym:'META',name:'Meta Platforms',sector:'Social Media',usd:0,prevUsd:FALLBACK.META,change:0,changePct:0,loaded:false},
+  {sym:'TSLA',name:'Tesla Inc.',sector:'EV / Auto',       usd:0,prevUsd:FALLBACK.TSLA,change:0,changePct:0,loaded:false},
+  {sym:'NFLX',name:'Netflix Inc.',sector:'Streaming',     usd:0,prevUsd:FALLBACK.NFLX,change:0,changePct:0,loaded:false},
+];
+
+function inr(st){return st.loaded&&st.usd>0 ? st.usd * FX_RATE : st.prevUsd * FX_RATE;}
+function fmtI(n){return '₹'+n.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function portVal(){return Object.values(holdings).reduce((s,h)=>{const st=STOCKS.find(x=>x.sym===h.sym);return s+(st?inr(st)*h.shares:0);},0);}
+
+// ── Fetch real prices via backend proxy (no CORS issues) ──────────
+async function fetchAll(manual = false) {
+  document.getElementById('loadBar').classList.remove('done');
+
+  const symbols = STOCKS.map(s => s.sym).join(',') + ',USDINR=X';
+  let successCount = 0;
+
+  try {
+    const resp = await fetch(`/api/prices?symbols=${encodeURIComponent(symbols)}`, {
+      signal: AbortSignal.timeout(15000)
+    });
+    if (!resp.ok) throw new Error('API error');
+    const json = await resp.json();
+    const prices = json.prices || {};
+
+    // Update FX rate
+    if (prices['USDINR=X'] && prices['USDINR=X'].price > 60) {
+      FX_RATE = prices['USDINR=X'].price;
+      document.getElementById('fxRate').textContent = FX_RATE.toFixed(2);
+    }
+
+    // Update stocks
+    STOCKS.forEach(st => {
+      const d = prices[st.sym];
+      if (d && d.price > 0) {
+        st.usd = d.price;
+        st.prevUsd = d.prevClose || d.price;
+        st.change = d.price - st.prevUsd;
+        st.changePct = ((d.price - st.prevUsd) / st.prevUsd) * 100;
+        st.loaded = true;
+        if (d.source === 'live') successCount++;
+      } else if (!st.loaded) {
+        st.usd = FALLBACK[st.sym];
+        st.prevUsd = FALLBACK[st.sym];
+        st.change = 0; st.changePct = 0; st.loaded = true;
+      }
+    });
+  } catch(e) {
+    // API unavailable — use fallback prices
+    STOCKS.forEach(st => {
+      if (!st.loaded) {
+        st.usd = FALLBACK[st.sym]; st.prevUsd = FALLBACK[st.sym];
+        st.change = 0; st.changePct = 0; st.loaded = true;
+      }
+    });
+  }
+
+  pricesLoaded = true;
+  document.getElementById('loadBar').classList.add('done');
+  const now = new Date().toLocaleString('en-US', {timeZone:'America/New_York',hour12:true,hour:'numeric',minute:'2-digit'});
+  const srcTxt = successCount > 0
+    ? `Live data · ${successCount}/${STOCKS.length} from Yahoo Finance · ${now} ET`
+    : `Estimated prices · ${now} ET`;
+  document.getElementById('srcLabel').textContent = srcTxt;
+  document.getElementById('lastUpd').textContent = `Updated ${now} ET`;
+  renderAll();
+}
+
+// ── Market Hours ───────────────────────────────────────────────────
+function getMarketStatus() {
+  const now = new Date();
+  const etStr = now.toLocaleString('en-US', {timeZone:'America/New_York',hour12:false,weekday:'short',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  // Parse: "Mon, 09:30:00" or "Mon 09:30:00"
+  const parts = etStr.replace(',','').trim().split(/\s+/);
+  const day = parts[0];
+  const timeParts = (parts[1]||'00:00:00').split(':');
+  const h = parseInt(timeParts[0]), m = parseInt(timeParts[1]);
+  const mins = h * 60 + m;
+  const isWeekday = !['Sat','Sun'].includes(day);
+  const regular = isWeekday && mins >= 570 && mins < 960;
+  const pre = isWeekday && mins >= 240 && mins < 570;
+  const after = isWeekday && mins >= 960 && mins < 1200;
+  let nextOpen = '';
+  if (isWeekday && mins < 570) { const w = 570-mins; nextOpen = `Opens in ${Math.floor(w/60)}h ${w%60}m`; }
+  else if (isWeekday && mins >= 960) nextOpen = 'Opens tomorrow at 9:30 AM ET';
+  else if (day === 'Fri' && mins >= 960) nextOpen = 'Opens Monday at 9:30 AM ET';
+  else if (['Sat','Sun'].includes(day)) nextOpen = 'Opens Monday at 9:30 AM ET';
+  return { regular, pre, after, isWeekday, mins, day, nextOpen };
+}
+
+function updateStatus() {
+  const s = getMarketStatus();
+  marketOpen = s.regular;
+  const banner = document.getElementById('statusBanner');
+  const dot = document.getElementById('statusDot');
+  const title = document.getElementById('statusTitle');
+  const sub = document.getElementById('statusSub');
+  const note = document.getElementById('closedNote');
+
+  if (marketOpen) {
+    banner.className = 'open'; dot.className = 'status-dot dot-open';
+    title.textContent = 'Market Open';
+    const till = 960 - s.mins;
+    sub.textContent = `NYSE Regular Hours · Closes in ${Math.floor(till/60)}h ${till%60}m`;
+    note.classList.remove('show');
+  } else if (s.pre) {
+    banner.className = 'pre'; dot.className = 'status-dot dot-pre';
+    title.textContent = 'Pre-Market';
+    sub.textContent = s.nextOpen + ' · Trading restricted';
+    note.classList.add('show');
+  } else if (s.after) {
+    banner.className = 'closed'; dot.className = 'status-dot dot-closed';
+    title.textContent = 'After-Hours'; sub.textContent = 'Regular session closed · ' + s.nextOpen;
+    note.classList.add('show');
+  } else {
+    banner.className = 'closed'; dot.className = 'status-dot dot-closed';
+    title.textContent = 'Market Closed'; sub.textContent = s.nextOpen;
+    note.classList.add('show');
+  }
+  document.getElementById('clock').textContent = new Date().toLocaleString('en-US', {timeZone:'America/New_York',hour12:true,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+// ── Render ─────────────────────────────────────────────────────────
+function renderSummary() {
+  const pv = portVal(), total = balance + pv, pl = total - START, plp = (pl/START)*100;
+  document.getElementById('summary').innerHTML = [
+    {l:'Cash Balance', v:fmtI(balance)},
+    {l:'Portfolio (₹)', v:fmtI(pv)},
+    {l:'Total Value', v:fmtI(total)},
+    {l:'Total P&L', v:(pl>=0?'+':'')+fmtI(Math.abs(pl))+' ('+(plp>=0?'+':'')+plp.toFixed(2)+'%)', c:pl>=0?'var(--primary)':'var(--red)'},
+  ].map(s=>`<div class="sum-card"><div class="sum-lbl">${s.l}</div><div class="sum-val"${s.c?' style="color:'+s.c+'"':''}>${s.v}</div></div>`).join('');
+}
+
+function renderMarket() {
+  if (!pricesLoaded) return;
+  const cls = marketOpen ? '' : ' mkt-closed';
+  document.getElementById('mktList').innerHTML = STOCKS.map(st => {
+    const h = holdings[st.sym];
+    const priceINR = inr(st);
+    const avgINR = h ? h.avgPriceINR : 0;
+    const pnl = h ? (priceINR - avgINR) * h.shares : 0;
+    const pnlp = h ? ((priceINR - avgINR) / avgINR) * 100 : 0;
+    const up = st.changePct >= 0;
+    const prevQty = document.getElementById('q-'+st.sym)?.value || 1;
+    const cantBuy = !marketOpen || balance < priceINR;
+    const cantSell = !marketOpen || !h || h.shares < 1;
+    return `<div class="mkt-card${cls}">
+      <div>
+        <div class="m-sym">${st.sym}</div>
+        <div class="m-name">${st.name}</div>
+        <div class="m-sector">${st.sector}</div>
+      </div>
+      <div>
+        <div class="m-price-inr">${fmtI(priceINR)}</div>
+        <div class="m-price-usd">$${st.usd > 0 ? st.usd.toFixed(2) : st.prevUsd.toFixed(2)} USD</div>
+        <div class="m-chg ${up?'up':'dn'}">${up?'▲':'▼'} ${Math.abs(st.changePct).toFixed(2)}% (${up?'+':''}$${Math.abs(st.change).toFixed(2)})</div>
+      </div>
+      <div class="m-hold">
+        ${h ? `<div class="m-hold-sh">${h.shares} sh @ ${fmtI(avgINR)}</div><div class="m-hold-pnl" style="color:${pnl>=0?'var(--primary)':'var(--red)'}">${pnl>=0?'+':''}${fmtI(Math.abs(pnl))} (${pnlp>=0?'+':''}${pnlp.toFixed(2)}%)</div>`
+          : '<span style="color:var(--muted);font-size:11px">No position</span>'}
+      </div>
+      <div class="m-actions">
+        <input class="qty-in" id="q-${st.sym}" type="number" min="1" value="${prevQty}" ${!marketOpen?'disabled':''}/>
+        <button class="btn btn-sell" onclick="trade('${st.sym}','sell')" ${cantSell?'disabled':''}>Sell</button>
+        <button class="btn btn-buy" onclick="trade('${st.sym}','buy')" ${cantBuy?'disabled':''}>Buy</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderChart() {
+  const svg = document.getElementById('chartSvg');
+  if (portHistory.length < 2) { svg.innerHTML = ''; return; }
+  const W=260,H=120,p=7;
+  const mn=Math.min(...portHistory),mx=Math.max(...portHistory),r=mx-mn||1;
+  const pts=portHistory.map((v,i)=>`${p+(i/(portHistory.length-1))*(W-p*2)},${H-p-((v-mn)/r)*(H-p*2)}`).join(' ');
+  const area=`M ${p},${H-p} `+portHistory.map((v,i)=>`L ${p+(i/(portHistory.length-1))*(W-p*2)},${H-p-((v-mn)/r)*(H-p*2)}`).join(' ')+` L ${W-p},${H-p} Z`;
+  const isUp=portHistory[portHistory.length-1]>=portHistory[0];
+  const col=isUp?'#00d4aa':'#ff4d4d';
+  svg.innerHTML=`<defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${col}" stop-opacity=".22"/><stop offset="100%" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
+  <path d="${area}" fill="url(#cg)"/>
+  <polyline fill="none" stroke="${col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts}"/>`;
+}
+
+function renderHoldings() {
+  const list = Object.values(holdings);
+  const el = document.getElementById('holdList');
+  if (!list.length) { el.innerHTML = '<p class="empty-msg">No holdings yet.</p>'; return; }
+  el.innerHTML = list.map(h => {
+    const st = STOCKS.find(s => s.sym === h.sym); if (!st) return '';
+    const mv = inr(st) * h.shares;
+    const pnlp = ((inr(st) - h.avgPriceINR) / h.avgPriceINR) * 100;
+    return `<div class="hold-row">
+      <div><div class="h-sym">${h.sym}</div><div class="h-sh">${h.shares} sh</div></div>
+      <div style="text-align:right"><div class="h-mv">${fmtI(mv)}</div><div class="h-pnl" style="color:${pnlp>=0?'var(--primary)':'var(--red)'}">${pnlp>=0?'+':''}${pnlp.toFixed(2)}%</div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderAll() { renderSummary(); renderMarket(); renderChart(); renderHoldings(); }
+
+function trade(sym, type) {
+  if (!marketOpen) return;
+  const st = STOCKS.find(s => s.sym === sym);
+  const qty = parseInt(document.getElementById('q-'+sym)?.value || 1) || 1;
+  const priceINR = inr(st);
+  if (type === 'buy') {
+    if (!st || balance < priceINR * qty) return;
+    balance -= priceINR * qty;
+    if (holdings[sym]) {
+      const tot = holdings[sym].shares + qty;
+      const avgINR = (holdings[sym].avgPriceINR * holdings[sym].shares + priceINR * qty) / tot;
+      holdings[sym] = {sym, shares: tot, avgPriceINR: avgINR};
+    } else { holdings[sym] = {sym, shares: qty, avgPriceINR: priceINR}; }
+  } else {
+    const h = holdings[sym];
+    if (!st || !h || h.shares < qty) return;
+    balance += priceINR * qty;
+    if (h.shares === qty) delete holdings[sym];
+    else holdings[sym] = {...h, shares: h.shares - qty};
+  }
+  portHistory = [...portHistory.slice(-80), balance + portVal()];
+  renderAll();
+}
+
+// Add money
+function openModal() { document.getElementById('addMoneyModal').classList.add('show'); }
+function closeModal() { document.getElementById('addMoneyModal').classList.remove('show'); }
+function setAmt(n) { document.getElementById('addAmount').value = n; }
+function confirmAdd() {
+  const n = parseFloat(document.getElementById('addAmount').value);
+  if (!n || n < 1) { alert('Enter a valid amount.'); return; }
+  balance += n;
+  portHistory = [...portHistory, balance + portVal()];
+  closeModal();
+  document.getElementById('addAmount').value = '';
+  renderAll();
+}
+
+// Clock update every second + auto-refresh
+setInterval(updateStatus, 1000);
+updateStatus();
+
+// Auto-refresh prices every 60s when market open
+setInterval(() => { if (marketOpen) fetchAll(); }, 60000);
+
+// Start
+fetchAll();
+</script>
+</body>
+</html>
