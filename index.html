@@ -3,95 +3,151 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FinHub — Financial Hub for Students</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>FinHub — Learn Investing by Doing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
-    body{font-family:'Inter',sans-serif;background:#0a1628;color:#fff;min-height:100vh;overflow-x:hidden}
-    :root{--primary:#00d4aa;--red:#ff4d4d;--card:#0f1e36;--border:#1e3a5f;--muted:#6b8aad}
+    body{font-family:'Inter',sans-serif;background:#f5f7ff;color:#1e1b4b;min-height:100vh;overflow-x:hidden}
+    :root{--p:#7c3aed;--g:#059669;--r:#e11d48;--y:#d97706;--b:#2563eb;--t:#0891b2;--card:#ffffff;--border:#e0e5f2;--muted:#64748b}
     a{text-decoration:none;color:inherit}
 
-    /* ── AUTH OVERLAY ── */
-    #authOverlay{position:fixed;inset:0;background:#0a1628;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+    /* ── AUTH OVERLAY (pure black) ── */
+    #authOverlay{position:fixed;inset:0;background:#000000;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
     #authOverlay.hidden{display:none}
-    .auth-box{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:40px;width:100%;max-width:420px;box-shadow:0 24px 80px rgba(0,0,0,.4)}
-    .auth-logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px}
-    .auth-logo-icon{width:40px;height:40px;background:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center}
-    .auth-logo-icon svg{width:20px;height:20px;stroke:#0a1628;fill:none;stroke-width:2.5}
-    .auth-logo span{font-size:22px;font-weight:800}
-    .auth-tabs{display:flex;background:rgba(255,255,255,.04);border-radius:10px;padding:4px;margin-bottom:28px}
-    .auth-tab{flex:1;padding:9px;border-radius:7px;font-size:14px;font-weight:600;text-align:center;cursor:pointer;border:none;background:none;color:var(--muted);font-family:inherit;transition:all .2s}
-    .auth-tab.active{background:var(--card);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-    .auth-title{font-size:20px;font-weight:800;margin-bottom:6px}
-    .auth-sub{font-size:14px;color:var(--muted);margin-bottom:24px}
-    .field{margin-bottom:16px}
-    .field label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px}
-    .field input{width:100%;background:#0a1628;border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;color:#fff;font-size:14px;font-family:inherit;transition:border-color .2s}
-    .field input:focus{outline:none;border-color:var(--primary)}
-    .auth-btn{width:100%;padding:13px;border-radius:10px;background:var(--primary);color:#0a1628;font-weight:700;font-size:15px;border:none;cursor:pointer;font-family:inherit;transition:opacity .2s;margin-top:4px}
-    .auth-btn:hover{opacity:.88}
-    .auth-error{background:rgba(255,77,77,.1);border:1px solid rgba(255,77,77,.3);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:14px;display:none}
+    .auth-box{background:#fff;border:2px solid #e0e5f2;border-radius:24px;padding:36px 32px;width:100%;max-width:460px;box-shadow:0 20px 60px rgba(124,58,237,.12);position:relative;max-height:90vh;overflow-y:auto}
+    .auth-logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:24px}
+    .auth-logo-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--p),var(--t));border-radius:12px;display:flex;align-items:center;justify-content:center}
+    .auth-logo-icon svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2.5}
+    .auth-logo span{font-size:24px;font-weight:900;color:#1e1b4b}
+
+    .type-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+    .type-tab{padding:16px 14px;border-radius:14px;border:2px solid #e0e5f2;background:#f8fafc;color:#64748b;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;transition:all .2s}
+    .type-tab svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2}
+    .type-tab.active-student{border-color:var(--p);background:rgba(124,58,237,.08);color:var(--p)}
+    .type-tab.active-teacher{border-color:var(--y);background:rgba(217,119,6,.08);color:var(--y)}
+
+    .auth-mode-row{display:flex;background:#f0f4ff;border-radius:12px;padding:4px;margin-bottom:22px}
+    .auth-mode-btn{flex:1;padding:11px;border-radius:9px;font-size:14px;font-weight:700;text-align:center;cursor:pointer;border:none;background:none;color:#64748b;font-family:inherit;transition:all .2s}
+    .auth-mode-btn.active{background:#fff;color:#1e1b4b;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+
+    .field{margin-bottom:14px}
+    .field label{display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+    .field input,.field select{width:100%;background:#f5f7ff;border:2px solid #e0e5f2;border-radius:10px;padding:13px 14px;color:#1e1b4b;font-size:15px;font-family:inherit;transition:border-color .2s}
+    .field input:focus,.field select:focus{outline:none;border-color:var(--p);background:#fff}
+    .field select{cursor:pointer}
+    .field select option{background:#fff;color:#1e1b4b}
+
+    .level-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+    .level-card{padding:14px;border-radius:10px;border:2px solid #e0e5f2;background:#f8fafc;cursor:pointer;text-align:left;transition:all .2s;font-family:inherit}
+    .level-card.selected-amateur{border-color:var(--g);background:rgba(5,150,105,.07)}
+    .level-card.selected-school{border-color:var(--b);background:rgba(37,99,235,.07)}
+    .level-card-title{font-size:13px;font-weight:700;margin-bottom:3px;color:#1e1b4b}
+    .level-card-sub{font-size:11px;color:#64748b;line-height:1.4}
+
+    .auth-btn{width:100%;padding:16px;border-radius:12px;font-weight:800;font-size:16px;border:none;cursor:pointer;font-family:inherit;margin-top:6px;transition:all .2s;letter-spacing:.2px}
+    .auth-btn-student{background:linear-gradient(135deg,var(--p),#4f46e5);color:#fff}
+    .auth-btn-teacher{background:linear-gradient(135deg,var(--y),#b45309);color:#fff}
+    .auth-btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(124,58,237,.3)}
+    .auth-error{background:rgba(225,29,72,.07);border:1.5px solid rgba(225,29,72,.25);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--r);margin-bottom:12px;display:none}
     .auth-error.show{display:block}
-    .auth-divider{text-align:center;color:var(--muted);font-size:12px;margin:16px 0;position:relative}
-    .auth-divider::before,.auth-divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:var(--border)}
+    .auth-divider{text-align:center;color:#94a3b8;font-size:12px;margin:14px 0;position:relative}
+    .auth-divider::before,.auth-divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:#e0e5f2}
     .auth-divider::before{left:0}.auth-divider::after{right:0}
-    .guest-btn{width:100%;padding:12px;border-radius:10px;background:transparent;border:1.5px solid var(--border);color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
-    .guest-btn:hover{border-color:rgba(255,255,255,.2);color:#fff}
-    .auth-footer{text-align:center;font-size:12px;color:var(--muted);margin-top:20px}
+    .guest-btn{width:100%;padding:14px;border-radius:10px;background:#f5f7ff;border:2px solid #e0e5f2;color:#64748b;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
+    .guest-btn:hover{border-color:var(--p);color:var(--p);background:rgba(124,58,237,.05)}
+    .auth-footer{text-align:center;font-size:11px;color:#94a3b8;margin-top:16px;line-height:1.6}
+
+    /* Lock button — only shown on login page */
+    #lockBtn{position:fixed;bottom:24px;right:24px;width:40px;height:40px;border-radius:50%;background:#222;border:2px solid #444;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:1001;transition:all .2s;opacity:.4}
+    #lockBtn:hover{opacity:.9;border-color:#7c3aed}
+    #lockBtn svg{width:15px;height:15px;stroke:#aaa;fill:none;stroke-width:2}
+    #lockBtn:hover svg{stroke:#7c3aed}
 
     /* ── NAV ── */
-    nav{display:flex;align-items:center;justify-content:space-between;padding:18px 40px;position:fixed;top:0;left:0;right:0;z-index:99;background:rgba(10,22,40,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
-    .logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800}
-    .logo-icon{width:34px;height:34px;background:var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center}
-    .logo-icon svg{width:18px;height:18px;stroke:#0a1628;fill:none;stroke-width:2.5}
-    .nav-links{display:flex;gap:24px}
-    .nav-links a{font-size:14px;font-weight:500;color:var(--muted);transition:color .2s}
-    .nav-links a:hover{color:var(--primary)}
-    .nav-right{display:flex;align-items:center;gap:12px}
-    .user-pill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:999px;padding:6px 14px 6px 6px;cursor:pointer;transition:all .2s}
-    .user-pill:hover{border-color:rgba(255,255,255,.2)}
-    .user-avatar{width:28px;height:28px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#0a1628}
-    .user-name{font-size:14px;font-weight:600}
-    .logout-btn{font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;font-family:inherit;transition:color .2s}
-    .logout-btn:hover{color:var(--red)}
+    nav{display:flex;align-items:center;justify-content:space-between;padding:14px 36px;position:fixed;top:0;left:0;right:0;z-index:99;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-bottom:1.5px solid #e0e5f2;box-shadow:0 2px 16px rgba(0,0,0,.05)}
+    .logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:900;color:#1e1b4b}
+    .logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--p),var(--t));border-radius:9px;display:flex;align-items:center;justify-content:center}
+    .logo-icon svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.5}
+    .logo span{color:#1e1b4b}
+    .nav-links{display:flex;gap:8px}
+    .nav-links a{font-size:14px;font-weight:600;color:#64748b;padding:8px 16px;border-radius:10px;transition:all .2s}
+    .nav-links a:hover{background:rgba(124,58,237,.08);color:var(--p)}
+    .nav-right{display:flex;align-items:center;gap:10px}
+
+    .profile-btn{display:flex;align-items:center;gap:9px;background:#f5f7ff;border:2px solid #e0e5f2;border-radius:999px;padding:6px 16px 6px 6px;cursor:pointer;transition:all .2s}
+    .profile-btn:hover{border-color:var(--p)}
+    .p-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--t));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;overflow:hidden;flex-shrink:0}
+    .p-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+    .p-name{font-size:14px;font-weight:700;color:#1e1b4b}
+    .logout-link{font-size:12px;color:#64748b;background:none;border:1.5px solid #e0e5f2;cursor:pointer;font-family:inherit;padding:6px 12px;border-radius:8px;font-weight:600}
+    .logout-link:hover{color:var(--r);border-color:var(--r)}
+
+    .profile-popup{position:absolute;top:62px;right:36px;width:320px;background:#fff;border:2px solid #e0e5f2;border-radius:20px;padding:20px;z-index:200;box-shadow:0 16px 48px rgba(0,0,0,.12);display:none}
+    .profile-popup.show{display:block}
+    .pp-header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+    .pp-photo-wrap{position:relative;width:60px;height:60px;flex-shrink:0}
+    .pp-photo{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--t));display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;overflow:hidden}
+    .pp-photo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+    .pp-cam{position:absolute;bottom:0;right:0;width:22px;height:22px;border-radius:50%;background:var(--p);border:2px solid #fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .pp-cam svg{width:10px;height:10px;stroke:#fff;fill:none;stroke-width:2.5}
+    .pp-info h4{font-size:16px;font-weight:800;color:#1e1b4b}
+    .pp-badge{display:inline-block;font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;margin-top:4px}
+    .pp-badge.student{background:rgba(124,58,237,.1);color:var(--p)}
+    .pp-badge.teacher{background:rgba(217,119,6,.1);color:var(--y)}
+    .pp-badge.amateur{background:rgba(5,150,105,.1);color:var(--g)}
+    .pp-badge.school{background:rgba(37,99,235,.1);color:var(--b)}
+    .pp-field{margin-bottom:10px}
+    .pp-field label{font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;display:block}
+    .pp-field input{width:100%;background:#f5f7ff;border:2px solid #e0e5f2;border-radius:8px;padding:9px 11px;color:#1e1b4b;font-size:13px;font-family:inherit}
+    .pp-field input:focus{outline:none;border-color:var(--p)}
+    .pp-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+    .pp-stat{background:#f5f7ff;border:1.5px solid #e0e5f2;border-radius:10px;padding:10px;text-align:center}
+    .pp-stat-val{font-size:14px;font-weight:800;font-family:monospace;color:#1e1b4b}
+    .pp-stat-lbl{font-size:10px;color:#64748b;margin-top:2px}
+    .pp-save{width:100%;padding:12px;border-radius:10px;background:linear-gradient(135deg,var(--p),#4f46e5);color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:inherit;transition:all .2s}
+    .pp-photo-input{display:none}
 
     /* ── HERO ── */
-    .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 24px 80px;position:relative;overflow:hidden}
-    .glow{position:absolute;border-radius:50%;pointer-events:none;filter:blur(80px)}
-    .glow1{width:500px;height:500px;background:rgba(0,212,170,.07);top:10%;left:10%}
-    .glow2{width:400px;height:400px;background:rgba(59,130,246,.06);bottom:10%;right:10%}
-    .welcome-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.25);color:var(--primary);border-radius:999px;padding:6px 18px;font-size:13px;font-weight:600;margin-bottom:20px}
-    h1{font-size:clamp(44px,7vw,84px);font-weight:800;letter-spacing:-3px;line-height:1.05;margin-bottom:22px}
-    .grad{background:linear-gradient(135deg,var(--primary) 0%,#60a5fa 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .hero-sub{font-size:18px;color:var(--muted);max-width:560px;margin:0 auto 52px;line-height:1.7}
+    .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 24px 80px;position:relative;z-index:1}
+    .welcome-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,58,237,.1);border:2px solid rgba(124,58,237,.2);color:var(--p);border-radius:999px;padding:8px 22px;font-size:13px;font-weight:700;margin-bottom:22px}
+    h1{font-size:clamp(40px,6.5vw,80px);font-weight:900;letter-spacing:-3px;line-height:1.05;margin-bottom:22px;color:#1e1b4b}
+    .grad{background:linear-gradient(135deg,var(--p) 0%,var(--t) 50%,#3b82f6 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero-sub{font-size:18px;color:#64748b;max-width:560px;margin:0 auto 52px;line-height:1.7}
 
     /* ── CARDS ── */
-    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;max-width:960px;width:100%;margin:0 auto;padding:0 24px}
-    .card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:34px 26px;display:flex;flex-direction:column;gap:18px;transition:transform .2s,border-color .2s;cursor:pointer;text-align:left}
-    .card:hover{transform:translateY(-4px);border-color:rgba(0,212,170,.35)}
-    .card-icon{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center}
-    .card-icon svg{width:24px;height:24px;stroke-width:2;fill:none;stroke:currentColor}
-    .card h2{font-size:19px;font-weight:800;letter-spacing:-.5px}
-    .card p{font-size:14px;color:var(--muted);line-height:1.65;flex:1}
-    .card-tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:4px 10px;border-radius:999px;border:1px solid;width:fit-content}
-    .card-link{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;transition:gap .2s}
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:960px;width:100%;padding:0 24px}
+    .card{background:#fff;border:2px solid #e0e5f2;border-radius:22px;padding:32px 26px;display:flex;flex-direction:column;gap:16px;transition:all .25s;cursor:pointer;text-align:left;position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.05)}
+    .card:hover{transform:translateY(-7px);box-shadow:0 20px 48px rgba(124,58,237,.12)}
+    .card-game:hover{border-color:rgba(124,58,237,.4)}
+    .card-real:hover{border-color:rgba(8,145,178,.4)}
+    .card-course:hover{border-color:rgba(37,99,235,.4)}
+    .card-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center}
+    .card-icon svg{width:26px;height:26px;stroke-width:2;fill:none;stroke:currentColor}
+    .card h2{font-size:20px;font-weight:800;color:#1e1b4b}
+    .card p{font-size:14px;color:#64748b;line-height:1.65;flex:1}
+    .card-tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:5px 13px;border-radius:999px;border:1.5px solid;width:fit-content}
+    .card-link{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:14px;transition:gap .2s}
     .card-link svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5}
-    .card:hover .card-link{gap:12px}
+    .card:hover .card-link{gap:14px}
 
-    /* ── TICKER ── */
-    .ticker-wrap{position:fixed;bottom:0;left:0;right:0;background:rgba(10,22,40,.95);border-top:1px solid var(--border);padding:10px 0;overflow:hidden;z-index:90}
-    .ticker-track{display:flex;gap:40px;white-space:nowrap;animation:tick 30s linear infinite}
-    .tick-item{display:flex;align-items:center;gap:8px;font-size:13px}
-    .tick-sym{font-weight:700}.up{color:var(--primary)}.dn{color:var(--red)}.sep{color:var(--border);margin-left:20px}
+    /* Ticker */
+    .ticker-wrap{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.97);border-top:1.5px solid #e0e5f2;padding:10px 0;overflow:hidden;z-index:90}
+    .ticker-track{display:flex;gap:36px;white-space:nowrap;animation:tick 30s linear infinite}
+    .tick-item{display:flex;align-items:center;gap:8px;font-size:13px;color:#1e1b4b}
+    .tick-sym{font-weight:700;color:#1e1b4b}.up{color:var(--g)}.dn{color:var(--r)}.sep{color:#e0e5f2;margin-left:16px}
     @keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-    .footer{padding:40px;text-align:center;color:var(--muted);font-size:13px;margin-bottom:44px}
+    .footer{padding:32px;text-align:center;color:#64748b;font-size:13px;margin-bottom:44px;position:relative;z-index:1}
 
-    @media(max-width:700px){.cards{grid-template-columns:1fr}.nav-links{display:none}nav{padding:14px 18px}}
+    @media(max-width:700px){.cards{grid-template-columns:1fr}.nav-links{display:none}nav{padding:12px 16px}.profile-popup{right:10px;width:calc(100vw - 20px)}}
   </style>
 </head>
 <body>
+
+<!-- Lock button -->
+<a href="master.html" id="lockBtn" title="Admin Access">
+  <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+</a>
 
 <!-- ── AUTH OVERLAY ── -->
 <div id="authOverlay">
@@ -100,36 +156,61 @@
       <div class="auth-logo-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
       <span>FinHub</span>
     </div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" onclick="switchTab('login')">Sign In</button>
-      <button class="auth-tab" onclick="switchTab('register')">Register</button>
+
+    <!-- Student/Teacher type selector -->
+    <div class="type-tabs">
+      <button class="type-tab active-student" id="tabStudent" onclick="setType('student')">
+        <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        Student
+      </button>
+      <button class="type-tab" id="tabTeacher" onclick="setType('teacher')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/><line x1="12" y1="14" x2="12" y2="21"/><line x1="8.5" y1="17.5" x2="12" y2="14"/><line x1="15.5" y1="17.5" x2="12" y2="14"/></svg>
+        Teacher
+      </button>
     </div>
 
-    <!-- Login Form -->
+    <!-- Login / Register tabs -->
+    <div class="auth-mode-row">
+      <button class="auth-mode-btn active" id="modeLogin" onclick="setMode('login')">Sign In</button>
+      <button class="auth-mode-btn" id="modeReg" onclick="setMode('register')">Register</button>
+    </div>
+
+    <div class="auth-error" id="authError"></div>
+
+    <!-- LOGIN FORM -->
     <div id="loginForm">
-      <div class="auth-title">Welcome back</div>
-      <div class="auth-sub">Sign in to your FinHub account</div>
-      <div class="auth-error" id="loginError"></div>
-      <div class="field"><label>Username or Email</label><input id="loginUser" type="text" placeholder="Enter your username" /></div>
-      <div class="field"><label>Password</label><input id="loginPass" type="password" placeholder="Enter your password" /></div>
-      <button class="auth-btn" onclick="doLogin()">Sign In</button>
+      <div class="field"><label>Username or Email</label><input id="liUser" type="text" placeholder="Enter your username"/></div>
+      <div class="field"><label>Password</label><input id="liPass" type="password" placeholder="Enter your password"/></div>
+      <button class="auth-btn auth-btn-student" id="loginBtn" onclick="doLogin()">Sign In</button>
       <div class="auth-divider">or</div>
       <button class="guest-btn" onclick="guestLogin()">Continue as Guest</button>
     </div>
 
-    <!-- Register Form -->
-    <div id="registerForm" style="display:none">
-      <div class="auth-title">Create account</div>
-      <div class="auth-sub">Start your investing journey today</div>
-      <div class="auth-error" id="regError"></div>
-      <div class="field"><label>Full Name</label><input id="regName" type="text" placeholder="Your name" /></div>
-      <div class="field"><label>Username</label><input id="regUser" type="text" placeholder="Choose a username" /></div>
-      <div class="field"><label>Email</label><input id="regEmail" type="email" placeholder="your@email.com" /></div>
-      <div class="field"><label>Password</label><input id="regPass" type="password" placeholder="Create a password (min 6 chars)" /></div>
-      <button class="auth-btn" onclick="doRegister()">Create Account</button>
+    <!-- REGISTER FORM -->
+    <div id="regForm" style="display:none">
+      <div class="field"><label>Full Name</label><input id="rName" type="text" placeholder="Your full name"/></div>
+      <div class="field"><label>Username</label><input id="rUser" type="text" placeholder="Choose a username (letters, numbers, _)"/></div>
+      <div class="field"><label>Email</label><input id="rEmail" type="email" placeholder="your@email.com"/></div>
+      <div class="field"><label>Password</label><input id="rPass" type="password" placeholder="Min. 6 characters"/></div>
+      <div class="field"><label>School / Institution Name</label><input id="rSchool" type="text" placeholder="e.g. Greenwood Academy"/></div>
+      <!-- Level selector — students only -->
+      <div id="levelField" class="field">
+        <label>How are you using FinHub?</label>
+        <div class="level-cards">
+          <button class="level-card" id="lvlAmateur" onclick="setLevel('amateur')">
+            <div class="level-card-title" style="color:var(--g)">Self-Learner</div>
+            <div class="level-card-sub">I'm exploring finance on my own out of curiosity or personal interest</div>
+          </button>
+          <button class="level-card" id="lvlSchool" onclick="setLevel('school')">
+            <div class="level-card-title" style="color:var(--b)">School Programme</div>
+            <div class="level-card-sub">My school or teacher has enrolled me in FinHub as part of a programme</div>
+          </button>
+        </div>
+      </div>
+      <button class="auth-btn auth-btn-student" id="regBtn" onclick="doRegister()">Create Account</button>
     </div>
 
-    <div class="auth-footer">By continuing, you agree to our Terms of Service &amp; Privacy Policy.<br>For educational purposes only — not real financial advice.</div>
+    <div class="auth-footer">FinHub is for educational purposes only — not real financial advice.</div>
   </div>
 </div>
 
@@ -137,7 +218,7 @@
 <nav>
   <div class="logo">
     <div class="logo-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-    FinHub
+    <span>FinHub</span>
   </div>
   <div class="nav-links">
     <a href="game.html">Market Game</a>
@@ -145,149 +226,275 @@
     <a href="course.html">Crash Course</a>
   </div>
   <div class="nav-right">
-    <div class="user-pill" id="userPill">
-      <div class="user-avatar" id="userAvatar">?</div>
-      <span class="user-name" id="userName">Guest</span>
-    </div>
-    <button class="logout-btn" onclick="doLogout()">Logout</button>
+    <button class="profile-btn" onclick="toggleProfile()">
+      <div class="p-avatar" id="navAvatar">?</div>
+      <span class="p-name" id="navName">Guest</span>
+    </button>
+    <button class="logout-link" onclick="doLogout()">Logout</button>
   </div>
 </nav>
 
+<!-- Profile popup -->
+<div class="profile-popup" id="profilePopup">
+  <div class="pp-header">
+    <div class="pp-photo-wrap">
+      <div class="pp-photo" id="ppPhoto"><span id="ppInitial">?</span></div>
+      <div class="pp-cam" onclick="document.getElementById('ppPhotoInput').click()">
+        <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </div>
+      <input type="file" id="ppPhotoInput" accept="image/*" class="pp-photo-input" onchange="uploadPhoto(this)"/>
+    </div>
+    <div class="pp-info">
+      <h4 id="ppName">Loading...</h4>
+      <div id="ppBadges"></div>
+    </div>
+  </div>
+  <div class="pp-field"><label>Display Name</label><input id="ppEditName" type="text" placeholder="Your name"/></div>
+  <div class="pp-field" id="ppSchoolField"><label>School</label><input id="ppEditSchool" type="text" placeholder="School name"/></div>
+  <div class="pp-stats">
+    <div class="pp-stat">
+      <div class="pp-stat-val" id="ppGameAvg">₹0</div>
+      <div class="pp-stat-lbl">Game Avg</div>
+    </div>
+    <div class="pp-stat">
+      <div class="pp-stat-val" id="ppRealVal">₹50,000</div>
+      <div class="pp-stat-lbl">Real Portfolio</div>
+    </div>
+  </div>
+  <button class="pp-save" onclick="saveProfile()">Save Changes</button>
+</div>
+
 <!-- ── HERO ── -->
 <section class="hero">
-  <div class="glow glow1"></div>
-  <div class="glow glow2"></div>
   <div class="welcome-badge" id="welcomeBadge">Welcome to FinHub</div>
   <h1>Learn Investing<br>by <span class="grad">Doing</span></h1>
   <p class="hero-sub">Stop reading boring textbooks. Experience real markets, trade real stocks, and build confidence for your financial future — all risk-free.</p>
 
   <div class="cards">
-    <a class="card" href="game.html">
-      <div class="card-icon" style="background:rgba(0,212,170,.12);color:var(--primary)">
+    <a class="card card-game" href="game.html">
+      <div class="card-icon" style="background:rgba(108,99,255,.15);color:var(--p)">
         <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
       </div>
       <h2>Market Game</h2>
-      <p>Fast-paced buy &amp; sell game. Volatile prices, market events, leaderboard. Start with ₹10,000 and beat the board!</p>
-      <span class="card-tag" style="color:var(--primary);border-color:rgba(0,212,170,.3)">Beginner Friendly</span>
-      <span class="card-link" style="color:var(--primary)">Play Now <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      <p>10 fictional stocks, volatile prices, real game mechanics. 30-day challenge with a detailed performance report. Start with ₹10,000!</p>
+      <span class="card-tag" style="color:var(--p);border-color:rgba(108,99,255,.3)">Beginner Friendly</span>
+      <span class="card-link" style="color:var(--p)">Play Now <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
     </a>
-    <a class="card" href="real.html">
-      <div class="card-icon" style="background:rgba(96,165,250,.12);color:#60a5fa">
+    <a class="card card-real" href="real.html">
+      <div class="card-icon" style="background:rgba(20,184,166,.15);color:var(--t)">
         <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       </div>
       <h2>Real Portfolio</h2>
-      <p>Invest in real companies — AAPL, TSLA, NVDA &amp; more. Live prices from Yahoo Finance. NYSE hours enforced. Start with ₹50,000.</p>
-      <span class="card-tag" style="color:#60a5fa;border-color:rgba(96,165,250,.3)">Real Companies</span>
-      <span class="card-link" style="color:#60a5fa">Start Investing <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      <p>Trade real Indian companies — Reliance, TCS, Infosys &amp; more. Live NSE prices, real market hours, TradingView charts. Start with ₹50,000.</p>
+      <span class="card-tag" style="color:var(--t);border-color:rgba(20,184,166,.3)">Real Companies</span>
+      <span class="card-link" style="color:var(--t)">Invest Now <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
     </a>
-    <a class="card" href="course.html">
-      <div class="card-icon" style="background:rgba(167,139,250,.12);color:#a78bfa">
+    <a class="card card-course" href="course.html">
+      <div class="card-icon" style="background:rgba(59,130,246,.15);color:var(--b)">
         <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
       </div>
       <h2>Crash Course</h2>
-      <p>6 essential investing topics explained simply. Stocks, risk management, P/E ratios, bull &amp; bear markets and more.</p>
-      <span class="card-tag" style="color:#a78bfa;border-color:rgba(167,139,250,.3)">Learn the Basics</span>
-      <span class="card-link" style="color:#a78bfa">Start Learning <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      <p>6 essential investing topics explained simply. Stocks, risk, P/E ratios, bull &amp; bear markets. With quizzes to test your knowledge!</p>
+      <span class="card-tag" style="color:var(--b);border-color:rgba(59,130,246,.3)">6 Lessons</span>
+      <span class="card-link" style="color:var(--b)">Start Learning <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
     </a>
   </div>
 </section>
 
 <div class="footer">
-  <p>© <span id="yr"></span> Financial Hub for Students &nbsp;·&nbsp; For educational purposes only. Not financial advice.</p>
+  <p>© <span id="yr"></span> FinHub — Financial Hub for Students &nbsp;·&nbsp; For educational purposes only.</p>
 </div>
-
 <div class="ticker-wrap"><div class="ticker-track" id="ticker"></div></div>
 
 <script>
 document.getElementById('yr').textContent = new Date().getFullYear();
 
 // ── Ticker ──
-const TICKERS=[
-  {s:'AAPL',v:'+1.2%',u:true},{s:'TSLA',v:'-0.8%',u:false},{s:'MSFT',v:'+0.5%',u:true},
-  {s:'NVDA',v:'+3.4%',u:true},{s:'GOOGL',v:'+0.9%',u:true},{s:'META',v:'-1.1%',u:false},
-  {s:'AMZN',v:'+0.6%',u:true},{s:'NFLX',v:'-0.4%',u:false},{s:'AMD',v:'+2.1%',u:true},
-  {s:'PYPL',v:'-2.3%',u:false},{s:'INTC',v:'+0.3%',u:true},{s:'ORCL',v:'+1.8%',u:true},
-];
-const d=[...TICKERS,...TICKERS];
-document.getElementById('ticker').innerHTML=d.map(t=>`<div class="tick-item"><span class="tick-sym">${t.s}</span><span class="${t.u?'up':'dn'}">${t.v}</span><span class="sep">|</span></div>`).join('');
+const TICKS = [{s:'AAPL',v:'+1.2%',u:true},{s:'TSLA',v:'-0.8%',u:false},{s:'MSFT',v:'+0.5%',u:true},{s:'NVDA',v:'+3.4%',u:true},{s:'RELIANCE',v:'+0.9%',u:true},{s:'TCS',v:'-0.6%',u:false},{s:'INFY',v:'+1.1%',u:true},{s:'HDFCBANK',v:'-0.4%',u:false},{s:'GOOGL',v:'+0.7%',u:true},{s:'META',v:'-1.1%',u:false},{s:'BAJFINANCE',v:'+2.1%',u:true},{s:'WIPRO',v:'+0.3%',u:true}];
+document.getElementById('ticker').innerHTML = [...TICKS,...TICKS].map(t=>`<div class="tick-item"><span class="tick-sym">${t.s}</span><span class="${t.u?'up':'dn'}">${t.v}</span><span class="sep">|</span></div>`).join('');
 
-// ── Auth System ──
-const USERS_KEY='finhub_users';
-const SESSION_KEY='finhub_session';
+// ── Storage ──
+const UK = 'finhub_users', SK = 'finhub_session';
+function getUsers(){return JSON.parse(localStorage.getItem(UK)||'{}')}
+function saveUsers(u){localStorage.setItem(UK,JSON.stringify(u))}
+function getSession(){return JSON.parse(localStorage.getItem(SK)||'null')}
+function saveSession(s){localStorage.setItem(SK,JSON.stringify(s))}
+function updateUser(un,d){const u=getUsers();if(u[un]){Object.assign(u[un],d);saveUsers(u)}}
 
-function getUsers(){return JSON.parse(localStorage.getItem(USERS_KEY)||'{}');}
-function saveUsers(u){localStorage.setItem(USERS_KEY,JSON.stringify(u));}
-function getSession(){return JSON.parse(localStorage.getItem(SESSION_KEY)||'null');}
-function saveSession(s){localStorage.setItem(SESSION_KEY,JSON.stringify(s));}
+// ── Form state ──
+let curType = 'student', curMode = 'login', curLevel = null;
 
-function switchTab(t){
-  document.querySelectorAll('.auth-tab').forEach((b,i)=>b.classList.toggle('active',i===(t==='login'?0:1)));
-  document.getElementById('loginForm').style.display=t==='login'?'block':'none';
-  document.getElementById('registerForm').style.display=t==='register'?'block':'none';
+function setType(t) {
+  curType = t;
+  document.getElementById('tabStudent').className = 'type-tab ' + (t==='student'?'active-student':'');
+  document.getElementById('tabTeacher').className = 'type-tab ' + (t==='teacher'?'active-teacher':'');
+  document.getElementById('levelField').style.display = t==='student' ? 'block' : 'none';
+  document.getElementById('loginBtn').className = 'auth-btn auth-btn-' + (t==='student'?'student':'teacher');
+  document.getElementById('regBtn').className = 'auth-btn auth-btn-' + (t==='student'?'student':'teacher');
 }
 
-function showError(id,msg){const e=document.getElementById(id);e.textContent=msg;e.classList.add('show');}
-function hideError(id){document.getElementById(id).classList.remove('show');}
-
-function doLogin(){
-  hideError('loginError');
-  const u=document.getElementById('loginUser').value.trim();
-  const p=document.getElementById('loginPass').value;
-  if(!u||!p){showError('loginError','Please enter username and password.');return;}
-  const users=getUsers();
-  const user=users[u.toLowerCase()]||Object.values(users).find(x=>x.email===u.toLowerCase());
-  if(!user){showError('loginError','Account not found. Please register first.');return;}
-  if(user.passHash!==btoa(p)){showError('loginError','Incorrect password. Please try again.');return;}
-  saveSession({username:user.username,name:user.name,email:user.email});
-  showApp(user.name,user.username);
+function setMode(m) {
+  curMode = m;
+  document.getElementById('modeLogin').className = 'auth-mode-btn ' + (m==='login'?'active':'');
+  document.getElementById('modeReg').className = 'auth-mode-btn ' + (m==='register'?'active':'');
+  document.getElementById('loginForm').style.display = m==='login' ? 'block' : 'none';
+  document.getElementById('regForm').style.display = m==='register' ? 'block' : 'none';
+  hideErr();
 }
 
-function doRegister(){
-  hideError('regError');
-  const name=document.getElementById('regName').value.trim();
-  const u=document.getElementById('regUser').value.trim().toLowerCase();
-  const email=document.getElementById('regEmail').value.trim().toLowerCase();
-  const p=document.getElementById('regPass').value;
-  if(!name||!u||!email||!p){showError('regError','Please fill in all fields.');return;}
-  if(p.length<6){showError('regError','Password must be at least 6 characters.');return;}
-  if(!/^[a-z0-9_]+$/.test(u)){showError('regError','Username: only letters, numbers, and underscores.');return;}
-  const users=getUsers();
-  if(users[u]){showError('regError','Username already taken. Choose another.');return;}
-  if(Object.values(users).find(x=>x.email===email)){showError('regError','Email already registered. Sign in instead.');return;}
-  users[u]={username:u,name,email,passHash:btoa(p),joinedAt:new Date().toISOString()};
+function setLevel(l) {
+  curLevel = l;
+  document.getElementById('lvlAmateur').className = 'level-card ' + (l==='amateur'?'selected-amateur':'');
+  document.getElementById('lvlSchool').className = 'level-card ' + (l==='school'?'selected-school':'');
+}
+
+function showErr(m){const e=document.getElementById('authError');e.textContent=m;e.classList.add('show')}
+function hideErr(){document.getElementById('authError').classList.remove('show')}
+
+function doLogin() {
+  hideErr();
+  const u = document.getElementById('liUser').value.trim().toLowerCase();
+  const p = document.getElementById('liPass').value;
+  if (!u||!p){showErr('Please enter username and password.');return}
+  const users = getUsers();
+  const user = users[u] || Object.values(users).find(x=>x.email===u);
+  if (!user){showErr('Account not found. Please register first.');return}
+  if (user.frozen){showErr('This account has been suspended. Contact your teacher or admin.');return}
+  if (user.passHash !== btoa(p)){showErr('Incorrect password. Please try again.');return}
+  if (user.type !== curType){showErr(`This is a ${user.type} account. Please select "${user.type === 'student' ? 'Student' : 'Teacher'}" above.`);return}
+  saveSession({username:user.username,name:user.name,type:user.type,school:user.school,level:user.level||''});
+  updateUser(user.username,{lastActive:Date.now()});
+  showApp(user);
+}
+
+function doRegister() {
+  hideErr();
+  const name = document.getElementById('rName').value.trim();
+  const u = document.getElementById('rUser').value.trim().toLowerCase();
+  const email = document.getElementById('rEmail').value.trim().toLowerCase();
+  const p = document.getElementById('rPass').value;
+  const school = document.getElementById('rSchool').value.trim();
+  if (!name||!u||!email||!p||!school){showErr('Please fill in all fields.');return}
+  if (p.length<6){showErr('Password must be at least 6 characters.');return}
+  if (!/^[a-z0-9_]+$/.test(u)){showErr('Username: only letters, numbers, and underscores.');return}
+  if (curType==='student' && !curLevel){showErr('Please select how you are using FinHub.');return}
+  const users = getUsers();
+  if (users[u]){showErr('Username already taken. Please choose another.');return}
+  if (Object.values(users).find(x=>x.email===email)){showErr('Email already registered. Please sign in.');return}
+  const newUser = {
+    username:u, passHash:btoa(p), name, type:curType, email,
+    school, schoolKey:school.toLowerCase().trim(),
+    level:curType==='student'?curLevel:'',
+    photo:null, gameHistory:[], gameAvg:0, realPortfolioValue:50000,
+    frozen:false, createdAt:new Date().toISOString(), lastActive:Date.now()
+  };
+  users[u] = newUser;
   saveUsers(users);
-  saveSession({username:u,name,email});
-  showApp(name,u);
+  saveSession({username:u,name,type:curType,school,level:newUser.level});
+  showApp(newUser);
 }
 
-function guestLogin(){
-  const s={username:'guest',name:'Guest Investor',email:'',isGuest:true};
-  saveSession(s);
-  showApp(s.name,s.username);
+function guestLogin() {
+  saveSession({username:'guest',name:'Guest',type:'student',school:'',level:'amateur',isGuest:true});
+  showApp({name:'Guest',type:'student',level:'amateur',school:'',gameHistory:[],gameAvg:0,realPortfolioValue:50000});
 }
 
-function doLogout(){
-  localStorage.removeItem(SESSION_KEY);
+function doLogout() {
+  localStorage.removeItem(SK);
+  document.getElementById('lockBtn').style.display = 'flex';
   document.getElementById('authOverlay').classList.remove('hidden');
-  document.getElementById('loginUser').value='';
-  document.getElementById('loginPass').value='';
-  switchTab('login');
+  document.getElementById('profilePopup').classList.remove('show');
+  document.getElementById('liUser').value='';
+  document.getElementById('liPass').value='';
 }
 
-function showApp(name,username){
+function showApp(user) {
   document.getElementById('authOverlay').classList.add('hidden');
-  document.getElementById('userName').textContent=name;
-  document.getElementById('userAvatar').textContent=name.charAt(0).toUpperCase();
-  document.getElementById('welcomeBadge').textContent='Welcome back, '+name.split(' ')[0]+'!';
+  document.getElementById('lockBtn').style.display = 'none';
+  document.getElementById('navName').textContent = user.name.split(' ')[0];
+  const av = document.getElementById('navAvatar');
+  const session = getSession();
+  const photo = session && !session.isGuest ? (getUsers()[session.username]||{}).photo : null;
+  if (photo) { av.innerHTML = `<img src="${photo}" alt=""/>`; } else { av.textContent = user.name.charAt(0).toUpperCase(); }
+  document.getElementById('welcomeBadge').textContent = 'Welcome, ' + user.name.split(' ')[0] + '!';
+  loadProfilePopup();
 }
 
-// Check existing session
-const session=getSession();
-if(session){showApp(session.name,session.username);}
+function heartbeat() {
+  const s = getSession();
+  if (!s || s.isGuest) return;
+  updateUser(s.username, {lastActive:Date.now()});
+}
+setInterval(heartbeat, 30000);
 
-// Enter key support
-document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
-document.getElementById('loginUser').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+function toggleProfile() {
+  document.getElementById('profilePopup').classList.toggle('show');
+  if (document.getElementById('profilePopup').classList.contains('show')) loadProfilePopup();
+}
+document.addEventListener('click', e => {
+  const pp = document.getElementById('profilePopup');
+  if (pp.classList.contains('show') && !pp.contains(e.target) && !e.target.closest('.profile-btn')) pp.classList.remove('show');
+});
+
+function loadProfilePopup() {
+  const s = getSession();
+  if (!s) return;
+  const users = getUsers();
+  const u = s.isGuest ? {name:'Guest',type:'student',level:'amateur',school:'',gameHistory:[],gameAvg:0,realPortfolioValue:50000} : (users[s.username]||{});
+  document.getElementById('ppName').textContent = u.name || s.name;
+  document.getElementById('ppEditName').value = u.name || s.name;
+  document.getElementById('ppEditSchool').value = u.school || '';
+  // Badges
+  let badges = `<span class="pp-badge ${u.type||'student'}">${(u.type||'student').charAt(0).toUpperCase()+(u.type||'student').slice(1)}</span>`;
+  if (u.type==='student') badges += ` <span class="pp-badge ${u.level||'amateur'}">${u.level==='school'?'School Programme':'Self-Learner'}</span>`;
+  document.getElementById('ppBadges').innerHTML = badges;
+  // Stats
+  const avg = u.gameHistory && u.gameHistory.length > 0 ? u.gameHistory.reduce((a,b)=>a+b,0)/u.gameHistory.length : 0;
+  document.getElementById('ppGameAvg').textContent = '₹'+Math.round(avg).toLocaleString('en-IN');
+  document.getElementById('ppRealVal').textContent = '₹'+(u.realPortfolioValue||50000).toLocaleString('en-IN');
+  // Photo
+  const ppDiv = document.getElementById('ppPhoto');
+  if (u.photo) { ppDiv.innerHTML = `<img src="${u.photo}" alt=""/>`; } else { ppDiv.innerHTML = `<span id="ppInitial">${(u.name||'G').charAt(0).toUpperCase()}</span>`; }
+  document.getElementById('ppSchoolField').style.display = u.school ? 'block' : 'none';
+}
+
+function uploadPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const s = getSession();
+    if (s && !s.isGuest) { updateUser(s.username, {photo:e.target.result}); }
+    loadProfilePopup();
+    // Update nav avatar
+    document.getElementById('navAvatar').innerHTML = `<img src="${e.target.result}" alt=""/>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveProfile() {
+  const s = getSession();
+  if (!s || s.isGuest) { alert('Sign in to save your profile!'); return; }
+  const name = document.getElementById('ppEditName').value.trim();
+  const school = document.getElementById('ppEditSchool').value.trim();
+  if (!name) { alert('Name cannot be empty.'); return; }
+  updateUser(s.username, {name, school, schoolKey:school.toLowerCase().trim()});
+  s.name = name; s.school = school; saveSession(s);
+  document.getElementById('navName').textContent = name.split(' ')[0];
+  document.getElementById('ppName').textContent = name;
+  alert('Profile saved!');
+}
+
+// Check session on load
+const session = getSession();
+if (session) {
+  const users = getUsers();
+  const u = session.isGuest ? {name:'Guest',type:'student',level:'amateur',gameHistory:[],gameAvg:0,realPortfolioValue:50000} : (users[session.username]||null);
+  if (u && !u.frozen) { showApp(u); heartbeat(); }
+  else { localStorage.removeItem(SK); }
+}
+
+document.getElementById('liPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
 </script>
 </body>
 </html>
